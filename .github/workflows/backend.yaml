@@ -3,10 +3,36 @@ on:
   workflow_dispatch:
 
 jobs:
-  Test-code:
+  build-and-push:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Test
-        run: echo "Backend test passed"
+      - name: login to docker hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - name: build and push
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/three-tier-backend:${{ github.run_id }} .
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/three-tier-backend:${{ github.run_id }}
+  
+  update-manifest:
+    runs-on: ubuntu-24.04
+    needs: build-and-push
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.TOKEN }}
+      - name: update tag in backend deployment
+        run: |
+          sed -i "s|tag:.*|tag: \"${{ github.run_id }}\"|g" ./backend/helm/three-tier-app/values.yaml
+      - name: commit and push
+        run: |
+          git config --global user.name 'info-vivekranjan'
+          git config --global user.email 'info.vivekranjan@gmail.com'
+          git add backend/helm/three-tier-app/values.yaml
+          git commit -m "Update backend image tag to ${{ github.run_id }}"
+          git push
