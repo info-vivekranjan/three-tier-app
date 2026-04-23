@@ -5,7 +5,14 @@ import { useRouter } from "next/navigation";
 import { getNotes, deleteNote, Note } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
-import { CategoryBadge, Skeleton, EmptyState, Pagination, PageHeader, Button } from "@/components/ui";
+import {
+  CategoryBadge,
+  Skeleton,
+  EmptyState,
+  Pagination,
+  PageHeader,
+  Button,
+} from "@/components/ui";
 
 export default function NotesPage() {
   const { user } = useAuth();
@@ -27,7 +34,10 @@ export default function NotesPage() {
   }, [page]);
 
   useEffect(() => {
-    if (!user?.token) { router.push("/login"); return; }
+    if (!user?.token) {
+      router.push("/login");
+      return;
+    }
     fetch();
   }, [user, fetch]);
 
@@ -47,8 +57,18 @@ export default function NotesPage() {
           action={
             <Link href="/notes/create">
               <Button variant="primary">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
                 New Note
               </Button>
@@ -58,7 +78,9 @@ export default function NotesPage() {
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-48" />)}
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-48" />
+            ))}
           </div>
         ) : notes.length === 0 ? (
           <EmptyState
@@ -78,7 +100,12 @@ export default function NotesPage() {
               ))}
             </div>
             {totalPages > 1 && (
-              <Pagination page={page} totalPages={totalPages} onPrev={() => setPage(p => p - 1)} onNext={() => setPage(p => p + 1)} />
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPrev={() => setPage((p) => p - 1)}
+                onNext={() => setPage((p) => p + 1)}
+              />
             )}
           </>
         )}
@@ -87,39 +114,86 @@ export default function NotesPage() {
   );
 }
 
-function NoteCard({ note, onDelete }: { note: Note; onDelete: (id: string) => void }) {
+function NoteCard({
+  note,
+  onDelete,
+}: {
+  note: Note;
+  onDelete: (id: string) => void;
+}) {
   return (
     <div className="group bg-stone-900 border border-stone-800 rounded-2xl p-5 hover:border-stone-700 transition-all flex flex-col">
       <div className="flex items-start justify-between gap-2 mb-3">
-        <h3 className="font-semibold text-stone-100 text-base line-clamp-2 flex-1">{note.title}</h3>
+        <h3 className="font-semibold text-stone-100 text-base line-clamp-2 flex-1">
+          {note.title}
+        </h3>
         <CategoryBadge category={note.category} />
       </div>
-      <p className="text-stone-400 text-sm leading-relaxed line-clamp-3 flex-1">{note.content}</p>
+      <p className="text-stone-400 text-sm leading-relaxed line-clamp-3 flex-1">
+        {note.content}
+      </p>
       <div className="mt-4 pt-4 border-t border-stone-800 flex items-center justify-between">
-        <span className="text-xs text-stone-600">{note.createdAt?.substring(0, 10)}</span>
+        <span className="text-xs text-stone-600">
+          {note.createdAt?.substring(0, 10)}
+        </span>
         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           {note.anyfile && (
             <a
-              href={`http://localhost:6800/api/uploads/${note.anyfile.replace("uploads/", "")}`}
-              target="_blank" rel="noreferrer"
+              href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${note.anyfile.replace("uploads/", "")}`}
+              target="_blank"
+              rel="noreferrer"
               className="p-2 text-stone-500 hover:text-stone-300 hover:bg-stone-800 rounded-lg transition-all"
               title="Download attachment"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
             </a>
           )}
-          <Link href={`/notes/edit/${note._id}`}
-            className="p-2 text-stone-500 hover:text-amber-400 hover:bg-amber-400/10 rounded-lg transition-all">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          <Link
+            href={`/notes/edit/${note._id}`}
+            className="p-2 text-stone-500 hover:text-amber-400 hover:bg-amber-400/10 rounded-lg transition-all"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
             </svg>
           </Link>
-          <button onClick={() => onDelete(note._id)}
-            className="p-2 text-stone-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          <button
+            onClick={() => onDelete(note._id)}
+            className="p-2 text-stone-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
             </svg>
           </button>
         </div>

@@ -15,14 +15,16 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUserState] = useState<UserInfo | null>(null);
-
-  useEffect(() => {
+  // AFTER ✅ - reads localStorage immediately during state initialisation
+  const [user, setUserState] = useState<UserInfo | null>(() => {
+    if (typeof window === "undefined") return null;
     try {
       const stored = localStorage.getItem("userInfo");
-      if (stored) setUserState(JSON.parse(stored));
-    } catch {}
-  }, []);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
 
   const setUser = (u: UserInfo | null) => {
     setUserState(u);

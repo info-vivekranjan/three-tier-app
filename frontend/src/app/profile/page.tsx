@@ -48,7 +48,7 @@ export default function ProfilePage() {
               <div className="w-20 h-20 rounded-full border-4 border-stone-900 overflow-hidden bg-amber-400 flex items-center justify-center">
                 {user.pic ? (
                   <img
-                    src={`http://localhost:6800/api/uploads/${user.pic.replace("uploads/", "")}`}
+                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${user.pic.replace("uploads/", "")}`}
                     alt="Profile"
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -56,19 +56,28 @@ export default function ProfilePage() {
                     }}
                   />
                 ) : (
-                  <span className="text-stone-950 text-xl font-bold font-serif">{initials}</span>
+                  <span className="text-stone-950 text-xl font-bold font-serif">
+                    {initials}
+                  </span>
                 )}
               </div>
             </div>
 
-            <h2 className="font-serif text-2xl text-stone-100 mb-1">{user.name}</h2>
+            <h2 className="font-serif text-2xl text-stone-100 mb-1">
+              {user.name}
+            </h2>
             <p className="text-stone-500 text-sm mb-6">{user.email}</p>
 
             <div className="grid grid-cols-2 gap-3 mb-6">
               {stats.map((s) => (
-                <div key={s.label} className="bg-stone-950 border border-stone-800 rounded-xl px-4 py-3">
+                <div
+                  key={s.label}
+                  className="bg-stone-950 border border-stone-800 rounded-xl px-4 py-3"
+                >
                   <p className="text-xs text-stone-600 mb-0.5">{s.label}</p>
-                  <p className="text-sm font-medium text-stone-300">{s.value}</p>
+                  <p className="text-sm font-medium text-stone-300">
+                    {s.value}
+                  </p>
                 </div>
               ))}
             </div>
