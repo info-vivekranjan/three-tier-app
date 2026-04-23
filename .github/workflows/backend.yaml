@@ -15,7 +15,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
       - name: build and push
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/three-tier-backend:${{ github.run_id }} .
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/three-tier-backend:${{ github.run_id }} ./backend
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/three-tier-backend:${{ github.run_id }}
   
   update-manifest:
