@@ -1,8 +1,8 @@
 name: Frontend
 on:
   push:
-    workflow_dispatch:
-    
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -12,8 +12,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
-        working-directory: ./frontend
+          node-version: "22"
       - name: install dependencies
         run: npm ci
         working-directory: ./frontend
@@ -23,8 +22,10 @@ jobs:
       - name: build
         run: npm run build
         working-directory: ./frontend
+
   build-and-push:
     runs-on: ubuntu-24.04
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -40,6 +41,7 @@ jobs:
 
   update-image:
     runs-on: ubuntu-24.04
+    needs: build-and-push
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
