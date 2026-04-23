@@ -17,13 +17,16 @@ services:
       PORT: 6800
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:6800/api
     ports:
       - "3000:3000"
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_API_URL: http://192.168.49.2:30284/api
+      NEXT_PUBLIC_API_URL: http://localhost:6800/api
 
 volumes:
   mongo-data:

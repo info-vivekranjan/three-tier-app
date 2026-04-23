@@ -1,0 +1,57 @@
+name: Frontend
+on:
+  push:
+    workflow_dispatch:
+    
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+        working-directory: ./frontend
+      - name: install dependencies
+        run: npm ci
+        working-directory: ./frontend
+      - name: lint
+        run: npm run lint
+        working-directory: ./frontend
+      - name: build
+        run: npm run build
+        working-directory: ./frontend
+  build-and-push:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: login to docker hub
+        uses: actions/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - name: build and push image
+        run: |
+          docker build -t vivekranjan040/three-tier-frontend:${{ github.run_id }} ./frontend
+          docker push vivekranjan040/three-tier-frontend:${{ github.run_id }}
+
+  update-image:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.TOKEN }}
+      - name: update tag name in frontend helm
+        run: |
+          sed -i "s|tag:.*|tag: \"${{ github.run_id }}\"|g" ./frontend/helm/frontend/values.yaml
+      - name: commit and push
+        run: |
+          git config --global user.name 'info-vivekranjan'
+          git config --global user.email 'infovivek.ranjan@gmail.com'
+          git add ./frontend/helm/frontend/values.yaml
+          git commit -m 'Update frontend image tag'
+          git push
