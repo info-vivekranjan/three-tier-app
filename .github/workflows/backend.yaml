@@ -35,4 +35,5 @@ jobs:
           git config --global user.email 'info.vivekranjan@gmail.com'
           git add backend/helm/three-tier-app/values.yaml
           git commit -m "Update backend image tag to ${{ github.run_id }}"
+          git pull
           git push

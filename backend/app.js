@@ -22,7 +22,7 @@ app.get("/api/health", async (req, res) => {
     const dbStatus = connect?.readyState === 1 ? "UP" : "DOWN";
 
     res.status(200).json({
-      check:"Argo CD deplyment - 25/04/2026",
+      check:"Argo CD deplyment - 25/04/2026 - 2",
       status: "UP",
       db: dbStatus,
       uptime: process.uptime(),
