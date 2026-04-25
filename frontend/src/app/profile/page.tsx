@@ -34,7 +34,7 @@ export default function ProfilePage() {
       <main className="max-w-2xl mx-auto px-4 sm:px-6 pt-24 pb-12">
         <div className="mb-8">
           <h1 className="font-serif text-3xl text-stone-100">Profile</h1>
-          <p className="text-stone-500 mt-1 text-sm">Your account details</p>
+          <p className="text-stone-500 mt-1 text-sm">Your account information</p>
         </div>
 
         {/* Avatar card */}
