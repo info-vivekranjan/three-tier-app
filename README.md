@@ -10,7 +10,7 @@ A full-stack, three-tier web application consisting of a **Next.js Frontend**, a
 ![Screenshot 3 - Argo CD Backend](/images/backend-argocd.png)
 
 ![Screenshot 4 - Argo CD Frontend](/images/frontend-argocd.png)
-![Application UI](./images/app-preview.png)
+
 ---
 
 ## 🏗️ Architecture Overview
@@ -41,6 +41,12 @@ docker-compose up --build
 ## ☸️ Kubernetes Deployment (Helm)
 
 We migrated from standard Kubernetes manifests to **Helm Charts** for easier templating and CI/CD integration. 
+
+### 0. Create EKS Cluster
+If you haven't created a cluster yet, provision one using `eksctl`:
+```bash
+eksctl create cluster --name three-tier-cluster --region us-east-1 --nodegroup-name standard-workers --node-type t3.medium --nodes 2 --nodes-min 1 --nodes-max 3 --managed
+```
 
 ### 1. Install / Upgrade the Backend Chart
 ```bash
@@ -131,4 +137,11 @@ We implemented fully automated CI pipelines for both the Frontend and Backend lo
   ```
 
 ---
-*Happy Helming! ⛵*
+
+## 🧹 Cleanup
+To avoid incurring unwanted AWS charges, remember to delete the cluster and its resources when you're done testing:
+```bash
+eksctl delete cluster --name three-tier-cluster --region us-east-1
+```
+
+---
