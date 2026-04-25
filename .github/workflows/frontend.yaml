@@ -52,5 +52,5 @@ jobs:
           git config --global user.email 'infovivek.ranjan@gmail.com'
           git add ./frontend/helm/frontend/values.yaml
           git commit -m 'Update frontend image tag'
-          git pull origin master
+          git pull --rebase origin master
           git push
